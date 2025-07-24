@@ -6,6 +6,7 @@ let playerTime = 0;
 let moves = 0;
 let gameEnded = false;
 let modeGame = 2;
+let humanCanPlay = true;
 
 const board = [
   ["", "", ""],
@@ -25,6 +26,7 @@ function clearBoard() {
   playerTime = 0;
   moves = 0;
   gameEnded = false;
+  humanCanPlay = true;
 
   for (row = 0; row < 3; row++) {
     for (col = 0; col < 3; col++) {
@@ -139,37 +141,39 @@ document.addEventListener("click", (e) => {
   if (e.target.className === "pos" && !gameEnded) {
     const pos = e.target.id;
 
-    moves++;
+    if (humanCanPlay) {
+      moves++;
 
-    const element = document.getElementById(pos);
+      const element = document.getElementById(pos);
 
-    const row = element.getAttribute("data-row");
-    const col = element.getAttribute("data-col");
+      const row = element.getAttribute("data-row");
+      const col = element.getAttribute("data-col");
 
-    const winner = checkWinner(board, PLAYER_SIGN[playerTime], row, col);
+      const winner = checkWinner(board, PLAYER_SIGN[playerTime], row, col);
 
-    element.textContent = PLAYER_SIGN[playerTime];
-    element.classList.add(PLAYER_SIGN[playerTime]);
-    board[row][col] = PLAYER_SIGN[playerTime];
+      element.textContent = PLAYER_SIGN[playerTime];
+      element.classList.add(PLAYER_SIGN[playerTime]);
+      board[row][col] = PLAYER_SIGN[playerTime];
 
-    if (winner.status) {
-      hasWinner(winner);
-    }
+      if (winner.status) {
+        hasWinner(winner);
+      }
 
-    playerTime = moves % 2;
-    if (modeGame !== 2 && moves < 9) {
-      computerPlay();
-    }
-    if (playerTime === 0) {
-      document.getElementById("p1").classList.add("playing");
-      document.getElementById("p2").classList.remove("playing");
-    } else {
-      document.getElementById("p1").classList.remove("playing");
-      document.getElementById("p2").classList.add("playing");
-    }
+      playerTime = moves % 2;
+      if (modeGame !== 2 && moves < 9) {
+        computerPlay();
+      }
+      if (playerTime === 0) {
+        document.getElementById("p1").classList.add("playing");
+        document.getElementById("p2").classList.remove("playing");
+      } else {
+        document.getElementById("p1").classList.remove("playing");
+        document.getElementById("p2").classList.add("playing");
+      }
 
-    if (moves > 8) {
-      noWinners();
+      if (moves > 8) {
+        noWinners();
+      }
     }
   }
 });
@@ -205,6 +209,7 @@ function noWinners() {
 }
 
 function computerPlay() {
+  humanCanPlay = false;
   if (gameEnded) return;
   document.getElementById("p1").classList.remove("playing");
   document.getElementById("p2").classList.add("playing");
@@ -344,6 +349,7 @@ function computerFillingPos(row, col) {
 
   document.getElementById("p1").classList.add("playing");
   document.getElementById("p2").classList.remove("playing");
+  humanCanPlay = true;
 }
 
 function selectChange() {
