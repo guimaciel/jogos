@@ -45,7 +45,14 @@ function clearBoard() {
   document.getElementById("score-p2").textContent = score2;
 }
 
-function checkWinner(board, player, row, col) {
+function checkWinner(
+  board,
+  player,
+  row,
+  col,
+  row2 = undefined,
+  col2 = undefined
+) {
   // clone board array
   const checkBoard = [];
   for (i = 0; i < 3; i++) {
@@ -53,6 +60,9 @@ function checkWinner(board, player, row, col) {
   }
 
   checkBoard[row][col] = player;
+  if (row2) {
+    checkBoard[row2][col2] = player;
+  }
 
   const winningCombos = [
     // Rows
@@ -201,51 +211,122 @@ function computerPlay() {
 
   let winner = { status: false };
 
-  // Check if wins with one position
-  for (row = 0; row < 3; row++) {
-    for (col = 0; col < 3; col++) {
-      if (board[row][col] === "") {
-        winner = checkWinner(board, PLAYER_SIGN[playerTime], row, col);
+  const timeout = Math.floor(Math.random() * 1500) + 500;
+  setTimeout(() => {
+    // Check if wins with one position
+    for (row = 0; row < 3; row++) {
+      for (col = 0; col < 3; col++) {
+        if (board[row][col] === "") {
+          winner = checkWinner(board, PLAYER_SIGN[playerTime], row, col);
 
-        if (winner.status) {
-          computerFillingPos(row, col);
-          return;
+          if (winner.status) {
+            computerFillingPos(row, col);
+            return;
+          }
         }
       }
     }
-  }
 
-  // Check if looses with one position
-  for (row = 0; row < 3; row++) {
-    for (col = 0; col < 3; col++) {
-      if (board[row][col] === "") {
-        winner = checkWinner(
-          board,
-          PLAYER_SIGN[(playerTime + 1) % 2],
-          row,
-          col
-        );
+    // Check if looses with one position
+    for (row = 0; row < 3; row++) {
+      for (col = 0; col < 3; col++) {
+        if (board[row][col] === "") {
+          winner = checkWinner(
+            board,
+            PLAYER_SIGN[(playerTime + 1) % 2],
+            row,
+            col
+          );
 
-        if (winner.status) {
-          computerFillingPos(row, col);
-          return;
+          if (winner.status) {
+            computerFillingPos(row, col);
+            return;
+          }
         }
       }
     }
-  }
 
-  // Choose randon
-  if (!winner.status) {
+    // Check 2 positions
     let loopStop = false;
-    while (!loopStop) {
-      const randRow = Math.floor(Math.random() * 3);
-      const randCol = Math.floor(Math.random() * 3);
-      if (board[randRow][randCol] === "") {
-        loopStop = true;
-        computerFillingPos(randRow, randCol);
+
+    if (!winner.status) {
+      for (row1 = 0; row1 < 3; row1++) {
+        for (col1 = 0; col1 < 3; col1++) {
+          if (board[row1][col1] !== "") {
+            continue;
+          }
+          for (row2 = 0; row2 < 3; row2++) {
+            for (col2 = 0; col2 < 3; col2++) {
+              if (board[row2][col2] !== "") {
+                continue;
+              }
+              if (row1 !== row2 || col1 !== col2) {
+                winner = checkWinner(
+                  board,
+                  PLAYER_SIGN[playerTime],
+                  row1,
+                  col1,
+                  row2,
+                  col2
+                );
+                if (winner.status) {
+                  computerFillingPos(row1, col1);
+
+                  return;
+                }
+                // winner = checkWinner(
+                //   board,
+                //   PLAYER_SIGN[(playerTime + 1) % 2],
+                //   row1,
+                //   col1,
+                //   row2,
+                //   col2
+                // );
+
+                // if (winner.status) {
+                //   computerFillingPos(row1, col1);
+                //   return;
+                // }
+              }
+            }
+          }
+        }
       }
     }
-  }
+
+    // Choose randon
+    if (!winner.status) {
+      loopStop = false;
+      let tryCorner = true;
+      let randRow, randCol;
+      const priorities = [
+        [[1, 1]],
+        [
+          [0, 0],
+          [0, 2],
+          [2, 0],
+          [2, 2],
+        ],
+        [
+          [0, 1],
+          [1, 0],
+          [1, 2],
+          [2, 1],
+        ],
+      ];
+
+      for (let i = 0; i < priorities.length; i++) {
+        const options = priorities[i].filter(([row, col]) => {
+          return board[row][col] === "";
+        });
+        if (options.length > 0) {
+          const rand = Math.floor(Math.random() * options.length);
+          computerFillingPos(options[rand][0], options[rand][1]);
+          break;
+        }
+      }
+    }
+  }, timeout);
 }
 
 function computerFillingPos(row, col) {
