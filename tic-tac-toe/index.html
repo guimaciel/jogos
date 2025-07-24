@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TicTacToe</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="border">
+      <h1>TicTacToe</h1>
+      <div class="options">
+        <label for="slct-player">Game mode:</label>
+        <select name="slct-player" id="slct-player" onchange="selectChange()">
+          <option value="1">1 Player</option>
+          <option value="2" selected>2 Players</option>
+        </select>
+      </div>
+
+      <div class="grid">
+        <div class="pos" id="pos0" data-row="0" data-col="0"></div>
+        <div class="pos" id="pos1" data-row="0" data-col="1"></div>
+        <div class="pos" id="pos2" data-row="0" data-col="2"></div>
+        <div class="pos" id="pos3" data-row="1" data-col="0"></div>
+        <div class="pos" id="pos4" data-row="1" data-col="1"></div>
+        <div class="pos" id="pos5" data-row="1" data-col="2"></div>
+        <div class="pos" id="pos6" data-row="2" data-col="0"></div>
+        <div class="pos" id="pos7" data-row="2" data-col="1"></div>
+        <div class="pos" id="pos8" data-row="2" data-col="2"></div>
+      </div>
+
+      <div class="status">
+        <button id="btnReset" onclick="clearBoard()">Restart Game</button>
+      </div>
+
+      <div class="score-board">
+        <p>SCORE</p>
+        <div class="score p1 playing" id="p1">
+          <div class="score-sign p1 X">X</div>
+          <div class="score-name p1">Player 1</div>
+          <div class="score-score p1" id="score-p1">0</div>
+        </div>
+        <div class="score p2" id="p2">
+          <div class="score-sign p2 O">O</div>
+          <div class="score-name p2" id="player2-name">Player 2</div>
+          <div class="score-score p2" id="score-p2">0</div>
+        </div>
+      </div>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
